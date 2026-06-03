@@ -7,13 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": [
-      "**",
-      "!coverage",
-      "!dist",
-      "!node_modules",
-      "!**/*.md"
-    ]
+    "includes": ["**", "!coverage", "!dist", "!node_modules", "!**/*.md"]
   },
   "formatter": {
     "enabled": true,

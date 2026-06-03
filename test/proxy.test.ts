@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Hono } from 'hono';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createProxyHandler } from '../src/lib/proxy';
 
 function makeApp(base = 'https://api.example.com', prefix = '/prefix') {
@@ -57,7 +57,10 @@ describe('createProxyHandler', () => {
   });
 
   it('preserves upstream status code exactly', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => new Response('not found', { status: 404 })));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('not found', { status: 404 }))
+    );
 
     const res = await makeApp().request('/prefix/path');
     expect(res.status).toBe(404);

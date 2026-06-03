@@ -6,8 +6,8 @@ import type { Context, Next } from 'hono';
  * Returns 500 when `AUTH_TOKEN` is unset — this is a server misconfiguration,
  * not a client error, so 401 would be misleading.
  */
-export async function authMiddleware(c: Context, next: Next): Promise<Response | void> {
-  const expected = process.env['AUTH_TOKEN'];
+export async function authMiddleware(c: Context, next: Next): Promise<Response | undefined> {
+  const expected = process.env.AUTH_TOKEN;
   if (!expected) {
     return c.json({ error: 'Server misconfigured: AUTH_TOKEN not set' }, 500);
   }

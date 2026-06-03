@@ -6,8 +6,6 @@
       "Read(//c/web/ChatterPay-Backend/scripts/**)",
       "PowerShell(Get-ChildItem C:\\\\web\\\\ChatterPay-Backend -File | Where-Object { $_.Name -match \"eslint|biome|prettier|vitest|jest|bun\\\\.test\" } | Select-Object Name)"
     ],
-    "additionalDirectories": [
-      "\\mnt\\c\\web\\ChatterPay-EU-Proxy"
-    ]
+    "additionalDirectories": ["\\mnt\\c\\web\\ChatterPay-EU-Proxy"]
   }
 }

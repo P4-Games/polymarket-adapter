@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { Hono } from 'hono';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { authMiddleware } from '../src/lib/auth';
 
 function makeApp() {
@@ -10,15 +10,15 @@ function makeApp() {
 }
 
 describe('authMiddleware', () => {
-  const original = process.env['AUTH_TOKEN'];
+  const original = process.env.AUTH_TOKEN;
 
   beforeEach(() => {
-    process.env['AUTH_TOKEN'] = 'secret';
+    process.env.AUTH_TOKEN = 'secret';
   });
 
   afterEach(() => {
-    if (original === undefined) delete process.env['AUTH_TOKEN'];
-    else process.env['AUTH_TOKEN'] = original;
+    if (original === undefined) delete process.env.AUTH_TOKEN;
+    else process.env.AUTH_TOKEN = original;
   });
 
   it('returns 401 when Authorization header is absent', async () => {
@@ -49,7 +49,7 @@ describe('authMiddleware', () => {
 
   // AUTH_TOKEN absent means server misconfiguration, not client error
   it('returns 500 when AUTH_TOKEN env var is not set', async () => {
-    delete process.env['AUTH_TOKEN'];
+    delete process.env.AUTH_TOKEN;
     const res = await makeApp().request('/test');
     expect(res.status).toBe(500);
   });

@@ -68,7 +68,10 @@ export function createProxyHandler(
         method: c.req.method,
         headers,
         body: ['GET', 'HEAD'].includes(c.req.method) ? undefined : c.req.raw.body,
-        signal: controller.signal
+        signal: controller.signal,
+        // Bun decompresses by default — disable so compressed bytes stream as-is
+        // with Content-Encoding header intact for the client to handle
+        decompress: false
       });
     } catch (err) {
       clearTimeout(timer);
