@@ -7,6 +7,8 @@ Reverse proxy on Google Cloud Run (europe-west1) to reach geo-restricted APIs fr
 | Prefix | Target |
 |---|---|
 | `/polymarket-clob/*` | `https://clob.polymarket.com` |
+| `/polymarket-gamma/*` | `https://gamma-api.polymarket.com` |
+| `/polymarket-data/*` | `https://data-api.polymarket.com` |
 | `/health` | local — no auth required |
 
 ## Env vars
