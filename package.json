@@ -1,0 +1,29 @@
+{
+  "name": "chatterpay-eu-proxy",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint .",
+    "lint:fix": "biome check . --write",
+    "format": "biome format . --write",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "hono": "^4.4.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.11",
+    "@types/bun": "latest",
+    "@vitest/coverage-v8": "^2.1.8",
+    "vitest": "^2.1.8"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

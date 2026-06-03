@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem C:\\\\web\\\\ChatterPay-Backend -File -Recurse | Where-Object { $_.Name -match \"Dockerfile|cloudbuild|docker\" } | Select-Object FullName)",
+      "Read(//c/web/ChatterPay-Backend/**)",
+      "Read(//c/web/ChatterPay-Backend/scripts/**)",
+      "PowerShell(Get-ChildItem C:\\\\web\\\\ChatterPay-Backend -File | Where-Object { $_.Name -match \"eslint|biome|prettier|vitest|jest|bun\\\\.test\" } | Select-Object Name)"
+    ],
+    "additionalDirectories": [
+      "\\mnt\\c\\web\\ChatterPay-EU-Proxy"
+    ]
+  }
+}
