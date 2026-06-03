@@ -6,5 +6,5 @@ cd "$(dirname "$0")/.."
 export $(grep -v '^#' .env | xargs)
 
 docker build \
-  -t chatterpay-eu-proxy \
+  -t chatterpay-polymarket-adapter \
   .

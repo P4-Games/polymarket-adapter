@@ -15,7 +15,7 @@ app.route('/polymarket-gamma', polymarketGamma);
 app.route('/polymarket-data', polymarketData);
 
 const port = Number(process.env.PORT ?? 8080);
-console.log(`ChatterPay-EU-Proxy listening on :${port}`);
+console.log(`ChatterPay Polymarket Adapter listening on :${port}`);
 
 export default {
   port,

@@ -1,5 +1,5 @@
 {
-  "name": "chatterpay-eu-proxy",
+  "name": "chatterpay-polymarket-adapter",
   "module": "src/index.ts",
   "type": "module",
   "private": true,

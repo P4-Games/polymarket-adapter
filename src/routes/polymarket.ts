@@ -1,12 +1,12 @@
 import { Hono } from 'hono';
-import { createProxyHandler } from '../lib/proxy';
+import { createAdapterHandler } from '../lib/adapter';
 
 const POLYMARKET_BASE = 'https://clob.polymarket.com';
 const STRIP_PREFIX = '/polymarket-clob';
 
 const polymarket = new Hono();
 
-const handler = createProxyHandler(POLYMARKET_BASE, STRIP_PREFIX);
+const handler = createAdapterHandler(POLYMARKET_BASE, STRIP_PREFIX);
 
 polymarket.all('/*', handler);
 

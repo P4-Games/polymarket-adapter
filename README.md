@@ -1,6 +1,6 @@
-# ChatterPay-EU-Proxy
+# ChatterPay Polymarket Adapter
 
-Reverse proxy on Google Cloud Run (europe-west1) to reach geo-restricted APIs from a European IP.
+Backend adapter for ChatterPay that centralizes calls to the Polymarket APIs.
 
 ## Route table
 
@@ -34,9 +34,9 @@ curl http://localhost:8080/health
 ## Cloud Run deploy
 
 ```bash
-gcloud run deploy chatterpay-eu-proxy \
+gcloud run deploy chatterpay-polymarket-adapter \
   --source . \
-  --region europe-west1 \
+  --region <deploy-region> \
   --platform managed \
   --allow-unauthenticated \
   --set-env-vars AUTH_TOKEN=<your-token> \

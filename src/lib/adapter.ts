@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
 
-/** Headers stripped before forwarding — never safe to proxy as-is. */
+/** Headers stripped before forwarding to upstream APIs. */
 const HOP_BY_HOP = new Set([
   'connection',
   'keep-alive',
@@ -10,18 +10,16 @@ const HOP_BY_HOP = new Set([
   'upgrade',
   'proxy-authorization',
   'proxy-connection',
-  // Internal proxy auth — must never reach the upstream
   'authorization',
-  // Replaced with upstream host below
   'host'
 ]);
 
-export interface ProxyOptions {
+export interface AdapterOptions {
   /** Upstream request timeout in ms. @default 10000 */
   timeout?: number;
 }
 
-/** Builds headers safe to forward: drops hop-by-hop, sets upstream Host. */
+/** Builds headers safe to forward: drops hop-by-hop headers and sets upstream Host. */
 function buildUpstreamHeaders(incoming: Headers, upstreamHost: string): Headers {
   const out = new Headers();
   for (const [key, value] of incoming.entries()) {
@@ -34,25 +32,25 @@ function buildUpstreamHeaders(incoming: Headers, upstreamHost: string): Headers 
 }
 
 /**
- * Creates a Hono handler that reverse-proxies requests to `targetBase`.
+ * Creates a Hono handler that adapts requests to `targetBase`.
  *
  * Strips hop-by-hop and `Authorization` headers; replaces `Host` with upstream host.
- * This proxy is credential-agnostic: any auth the upstream requires must arrive
- * from the caller in non-`Authorization` headers (e.g. `CLOB-API-KEY`).
+ * Any auth the upstream requires must arrive from the caller in non-`Authorization`
+ * headers, such as `CLOB-API-KEY`.
  *
  * @param targetBase  - Full upstream base URL, e.g. `"https://clob.polymarket.com"`
  * @param stripPrefix - Path prefix removed from the incoming request before forwarding
- * @param options     - Optional proxy config
+ * @param options     - Optional adapter config
  */
-export function createProxyHandler(
+export function createAdapterHandler(
   targetBase: string,
   stripPrefix: string,
-  options?: ProxyOptions
+  options?: AdapterOptions
 ) {
   const timeout = options?.timeout ?? 10_000;
   const upstreamHost = new URL(targetBase).host;
 
-  return async function proxyHandler(c: Context): Promise<Response> {
+  return async function adapterHandler(c: Context): Promise<Response> {
     const incomingUrl = new URL(c.req.url);
     const upstreamPath = incomingUrl.pathname.slice(stripPrefix.length) || '/';
     const targetUrl = `${targetBase}${upstreamPath}${incomingUrl.search}`;
@@ -69,8 +67,8 @@ export function createProxyHandler(
         headers,
         body: ['GET', 'HEAD'].includes(c.req.method) ? undefined : c.req.raw.body,
         signal: controller.signal,
-        // Bun decompresses by default — disable so compressed bytes stream as-is
-        // with Content-Encoding header intact for the client to handle
+        // Bun decompresses by default; disable so compressed bytes stream as-is
+        // with Content-Encoding header intact for the client to handle.
         decompress: false
       });
     } catch (err) {
@@ -78,14 +76,14 @@ export function createProxyHandler(
       if ((err as Error).name === 'AbortError') {
         return c.json({ error: 'Upstream timeout' }, 504);
       }
-      console.error(`[proxy] ${c.req.method} ${upstreamPath} → fetch error: ${String(err)}`);
+      console.error(`[adapter] ${c.req.method} ${upstreamPath} fetch error: ${String(err)}`);
       return c.json({ error: 'Bad gateway' }, 502);
     }
 
     clearTimeout(timer);
 
     if (upstreamRes.status >= 400) {
-      console.error(`[proxy] ${c.req.method} ${upstreamPath} → upstream ${upstreamRes.status}`);
+      console.error(`[adapter] ${c.req.method} ${upstreamPath} upstream ${upstreamRes.status}`);
     }
 
     return new Response(upstreamRes.body, {

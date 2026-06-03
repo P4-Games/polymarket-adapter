@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "chatterpay-eu-proxy",
+      "name": "chatterpay-polymarket-adapter",
       "dependencies": {
         "hono": "^4.4.0",
       },

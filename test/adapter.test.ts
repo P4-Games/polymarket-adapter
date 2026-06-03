@@ -1,14 +1,14 @@
 import { Hono } from 'hono';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createProxyHandler } from '../src/lib/proxy';
+import { createAdapterHandler } from '../src/lib/adapter';
 
 function makeApp(base = 'https://api.example.com', prefix = '/prefix') {
   const app = new Hono();
-  app.all('/*', createProxyHandler(base, prefix));
+  app.all('/*', createAdapterHandler(base, prefix));
   return app;
 }
 
-describe('createProxyHandler', () => {
+describe('createAdapterHandler', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
