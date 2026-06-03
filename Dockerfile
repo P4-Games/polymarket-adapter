@@ -1,4 +1,4 @@
-FROM oven/bun:1-alpine AS base
+FROM oven/bun:1.1.21-alpine AS base
 
 WORKDIR /app
 
@@ -8,6 +8,7 @@ RUN bun install --frozen-lockfile --production
 COPY src/ ./src/
 COPY tsconfig.json ./
 
+ENV PORT 8080
 EXPOSE 8080
 
 CMD ["bun", "run", "src/index.ts"]
