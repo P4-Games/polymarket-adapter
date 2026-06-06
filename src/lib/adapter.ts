@@ -87,7 +87,11 @@ export function createAdapterHandler(
     }
 
     // TEMP DIAG: inspect L2 auth headers + upstream error body on order POST. Remove after debug.
-    if (c.req.method === 'POST' && upstreamPath.includes('/order')) {
+    if (
+      upstreamPath.includes('/order') ||
+      upstreamPath.includes('/auth/api-key') ||
+      upstreamPath.includes('/auth/derive-api-key')
+    ) {
       const diag = {
         apiKey: (headers.get('poly_api_key') ?? headers.get('poly-api-key'))?.slice(0, 8),
         address: headers.get('poly_address') ?? headers.get('poly-address'),
@@ -98,7 +102,7 @@ export function createAdapterHandler(
       };
       const errBody = await upstreamRes.clone().text();
       console.log(
-        `[adapter:diag] /order status=${upstreamRes.status} req=${JSON.stringify(diag)} resp=${errBody}`
+        `[adapter:diag] ${c.req.method} ${upstreamPath} status=${upstreamRes.status} req=${JSON.stringify(diag)} resp=${errBody}`
       );
     }
 
