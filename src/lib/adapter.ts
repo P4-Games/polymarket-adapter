@@ -11,7 +11,16 @@ const HOP_BY_HOP = new Set([
   'proxy-authorization',
   'proxy-connection',
   'authorization',
-  'host'
+  'host',
+  // strip client IP / geo leakage so upstream sees only the proxy's IP
+  'x-forwarded-for',
+  'x-forwarded-proto',
+  'x-forwarded-host',
+  'forwarded',
+  'x-real-ip',
+  // let fetch recompute from the buffered body to avoid a stale length that
+  // breaks the upstream L2 HMAC (which signs the exact body bytes)
+  'content-length'
 ]);
 
 export interface AdapterOptions {
@@ -57,15 +66,22 @@ export function createAdapterHandler(
 
     const headers = buildUpstreamHeaders(c.req.raw.headers, upstreamHost);
 
+    // Buffer the body instead of streaming the raw ReadableStream. Forwarding the
+    // stream can drop/alter bytes (and pairs badly with a stale Content-Length),
+    // which corrupts the upstream L2 HMAC that signs the exact request body —
+    // surfacing as a misleading "Invalid api key" on POST /order.
+    const method = c.req.method;
+    const body = ['GET', 'HEAD'].includes(method) ? undefined : await c.req.arrayBuffer();
+
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
 
     let upstreamRes: Response;
     try {
       upstreamRes = await fetch(targetUrl, {
-        method: c.req.method,
+        method,
         headers,
-        body: ['GET', 'HEAD'].includes(c.req.method) ? undefined : c.req.raw.body,
+        body,
         signal: controller.signal,
         // Bun decompresses by default; disable so compressed bytes stream as-is
         // with Content-Encoding header intact for the client to handle.
