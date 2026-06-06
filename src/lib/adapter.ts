@@ -86,6 +86,22 @@ export function createAdapterHandler(
       console.error(`[adapter] ${c.req.method} ${upstreamPath} upstream ${upstreamRes.status}`);
     }
 
+    // TEMP DIAG: inspect L2 auth headers + upstream error body on order POST. Remove after debug.
+    if (c.req.method === 'POST' && upstreamPath.includes('/order')) {
+      const diag = {
+        apiKey: (headers.get('poly_api_key') ?? headers.get('poly-api-key'))?.slice(0, 8),
+        address: headers.get('poly_address') ?? headers.get('poly-address'),
+        timestamp: headers.get('poly_timestamp') ?? headers.get('poly-timestamp'),
+        sig: (headers.get('poly_signature') ?? headers.get('poly-signature'))?.slice(0, 12),
+        pass: (headers.get('poly_passphrase') ?? headers.get('poly-passphrase'))?.slice(0, 8),
+        hdrNames: [...headers.keys()].join(',')
+      };
+      const errBody = await upstreamRes.clone().text();
+      console.log(
+        `[adapter:diag] /order status=${upstreamRes.status} req=${JSON.stringify(diag)} resp=${errBody}`
+      );
+    }
+
     return new Response(upstreamRes.body, {
       status: upstreamRes.status,
       statusText: upstreamRes.statusText,
