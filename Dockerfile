@@ -1,6 +1,6 @@
 FROM node:20.19.0-bullseye AS base
 
-COPY package.json bun.lockb tsconfig.json ./
+COPY package.json bun.lock tsconfig.json ./
 RUN curl -fsSL https://bun.sh/install | bash -s "bun-v1.1.21" && \
     echo 'export BUN_INSTALL="$HOME/.bun"' >> ~/.bashrc && \
     echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> ~/.bashrc && \
@@ -15,9 +15,9 @@ RUN node -v && bun -v
 WORKDIR /app
 
 ARG AUTH_TOKEN
-enV AUTH_TOKEN=${AUTH_TOKEN}
+ENV AUTH_TOKEN=${AUTH_TOKEN}
 
-COPY package.json bun.lockb tsconfig.json ./
+COPY package.json bun.lock tsconfig.json ./
 RUN bun install --frozen-lockfile
 
 COPY src/ ./src
