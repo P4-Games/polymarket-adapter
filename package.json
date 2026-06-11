@@ -1,8 +1,10 @@
 {
   "name": "chatterpay-polymarket-adapter",
+  "license": "MIT",
+  "private": false,
+  "author": "Chatterpay",
   "module": "src/index.ts",
   "type": "module",
-  "private": true,
   "scripts": {
     "dev": "bun --hot src/index.ts",
     "start": "bun src/index.ts",
@@ -11,6 +13,7 @@
     "lint:fix": "biome check . --write",
     "format": "biome format . --write",
     "test": "vitest run",
+    "create-env": "printenv > .env",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
   },
