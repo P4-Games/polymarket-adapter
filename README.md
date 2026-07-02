@@ -30,15 +30,3 @@ Test:
 curl -H "Authorization: Bearer secret" http://localhost:8080/polymarket-clob/markets
 curl http://localhost:8080/health
 ```
-
-## Cloud Run deploy
-
-```bash
-gcloud run deploy chatterpay-polymarket-adapter \
-  --source . \
-  --region <deploy-region> \
-  --platform managed \
-  --allow-unauthenticated \
-  --set-env-vars AUTH_TOKEN=<your-token> \
-  --port 8080
-```
