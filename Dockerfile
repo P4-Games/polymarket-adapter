@@ -17,6 +17,9 @@ WORKDIR /app
 ARG AUTH_TOKEN
 ENV AUTH_TOKEN=${AUTH_TOKEN}
 
+ARG ALLOWED_WS_ORIGINS
+ENV ALLOWED_WS_ORIGINS=${ALLOWED_WS_ORIGINS}
+
 COPY package.json bun.lock tsconfig.json ./
 RUN bun install --frozen-lockfile
 
