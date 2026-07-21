@@ -40,11 +40,18 @@ polymarketWs.get(
           const subscribe = parseSubscribe(evt.data);
           if (!subscribe) {
             console.log('[ws-relay] dropped — invalid initial subscribe');
+            if (subscribeTimer) {
+              clearTimeout(subscribeTimer);
+              subscribeTimer = null;
+            }
             ws.close(1008, 'Invalid subscribe');
             return;
           }
           validated = true;
-          if (subscribeTimer) clearTimeout(subscribeTimer);
+          if (subscribeTimer) {
+            clearTimeout(subscribeTimer);
+            subscribeTimer = null;
+          }
 
           upstream = new WebSocket(UPSTREAM_WS_URL);
           upstream.onopen = () => upstream?.send(evt.data as string);
@@ -67,13 +74,20 @@ polymarketWs.get(
       },
 
       onClose(_evt, _ws) {
-        if (subscribeTimer) clearTimeout(subscribeTimer);
+        if (subscribeTimer) {
+          clearTimeout(subscribeTimer);
+          subscribeTimer = null;
+        }
         upstream?.close();
         upstream = null;
         console.log('[ws-relay] close');
       },
 
       onError() {
+        if (subscribeTimer) {
+          clearTimeout(subscribeTimer);
+          subscribeTimer = null;
+        }
         upstream?.close();
         upstream = null;
       }

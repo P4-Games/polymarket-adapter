@@ -3,7 +3,10 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-export $(grep -v '^#' .env | xargs)
+set -a
+# shellcheck disable=SC1091
+source .env
+set +a
 
 docker build \
   --build-arg AUTH_TOKEN="$AUTH_TOKEN" \

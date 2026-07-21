@@ -58,6 +58,13 @@ describe('parseSubscribe', () => {
 });
 
 describe('connectionGuard', () => {
+  const original = process.env.ALLOWED_WS_ORIGINS;
+
+  afterEach(() => {
+    if (original === undefined) delete process.env.ALLOWED_WS_ORIGINS;
+    else process.env.ALLOWED_WS_ORIGINS = original;
+  });
+
   function makeApp() {
     const app = new Hono();
     app.get('/market', connectionGuard, (c) => c.text('ok'));
@@ -70,7 +77,6 @@ describe('connectionGuard', () => {
       headers: { origin: 'https://evil.example' }
     });
     expect(res.status).toBe(403);
-    delete process.env.ALLOWED_WS_ORIGINS;
   });
 
   it('passes through with an allowed origin', async () => {
