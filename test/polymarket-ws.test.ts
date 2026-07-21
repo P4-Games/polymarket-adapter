@@ -23,6 +23,13 @@ describe('isOriginAllowed', () => {
     expect(isOriginAllowed('https://evil.example')).toBe(false);
     expect(isOriginAllowed(null)).toBe(false);
   });
+
+  it('matches bare-hostname allowlist entries against the full browser origin', () => {
+    process.env.ALLOWED_WS_ORIGINS = 'chatterpay.net,chatterpay.com.ar';
+    expect(isOriginAllowed('https://chatterpay.net')).toBe(true);
+    expect(isOriginAllowed('https://chatterpay.com.ar')).toBe(true);
+    expect(isOriginAllowed('https://evil.example')).toBe(false);
+  });
 });
 
 describe('parseSubscribe', () => {

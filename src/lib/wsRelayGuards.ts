@@ -18,11 +18,22 @@ function allowedOrigins(): string[] {
     .filter(Boolean);
 }
 
+/** Origin is always a full `scheme://host`; allowlist entries may be bare hostnames. */
+function hostOf(value: string): string {
+  try {
+    return new URL(value).hostname;
+  } catch {
+    return value;
+  }
+}
+
 /** Empty/unset allowlist = allow all origins (local dev). */
 export function isOriginAllowed(origin: string | null): boolean {
   const allowed = allowedOrigins();
   if (allowed.length === 0) return true;
-  return !!origin && allowed.includes(origin);
+  if (!origin) return false;
+  const originHost = hostOf(origin);
+  return allowed.some((entry) => hostOf(entry) === originHost);
 }
 
 export type SubscribeMessage = { assets_ids: string[]; type: 'market' };
